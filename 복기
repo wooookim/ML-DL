@@ -1,0 +1,135 @@
+# 개념 ------------------------------------------------
+샘플링 편향
+- 일반적으로 훈련/테스트 세트 샘플이 고루 섞이지 않으면 발생
+- 최초 리스트 생성에서 고정된 분류 시 정확도 이상
+
+스케일
+- 두 특성(x, y) 간 차이 존재
+
+표준점수(z-score)
+- 각 특성값이 평균에서 표준편차의 몇 배만큼 떨어져 있는가 
+  # train_scaled = (train_input - mean) / std
+
+결정계수(R^2)
+- 회귀 모델 평가
+- R^2 = 1 - [{(타겟 - 예측값)^2} 합 / {(타겟 - 평균)^2 합}]
+- 평균을 겨냥할 경우 0, 예측값을 겨냥할 경우 1에 가까워진다.
+  # KNR에서 knr.score 매서드 결과
+
+과대적합
+- 훈련 세트에서 점수가 높았으나 테스트 점수에서 점수가 떨어지는 경우
+-> k값을 늘린다
+
+과소적합
+- 훈련/테스트 세트 모두 점수가 낮은 경우
+- 모델이 너무 단순해서 발생
+- 훈련/테스트 데이터 세트 크기가 너무 작은 경우 발생
+-> k값을 줄인
+
+예측 오류
+- 새로운 샘플(타겟)이 데이터 세트를 벗어나면서 데이터 세트 내 최댓값들의 평균으로 출력됨
+
+선형회귀
+- 특성이 하나인 경우 특성을 가장 잘 나타내는 '직선'을 학습하는 알고리즘
+- y = ax + b
+  파라미터
+  - 모델이 지정하는 계수
+  - lr에서 기울기와 상수에 해당
+  - a = lr.coef_  -> 기울기 = 계수 = 가중치
+  - b = lr.intercept_
+
+다항회귀
+- 2차 방저식으로 회귀선을 곡선으로
+
+# 파이썬 응용 ------------------------------------------------
+data = [[a, b] for a,b in zip(a_data, b_data)]      
+
+        
+# 전처리
+train_test_split(x_data, y_data, test_size = , stratify = y_data, random_state= ) 
+        # 기본 분류 비율 : 25%
+        
+        # stratify 매개변수에 타겟 데이터를 전달하면 클래스 비율에 맞게 조정
+        # 훈련 데이터가 작거나 특정 클래스의 샘플 개수가 적을 때 특히 유용
+
+        
+# numpy ------------------------------------------------
+test_array = np.array([1,2,3,4])
+test_array.shape # 행,열 출력
+        # [1,2,3,4]
+        # (4,) -> 행 요소 4개, 열 1개
+test_array.reshape(2, 2) # 재배열
+         [[1 2]
+          [3 4]]
+        # (2, 2) -> 행 요소 2개, 열 2개
+test_array.reshape(-1, 1) # -1 = 전체 선
+
+        
+np.random.seed(42) # 랜덤 시드 지정
+index = np.arange(49) #0 부터 49까지 (n-1)까지 증가하는 배열 생성
+np.random.suffle(index) # 주어지는 배열 무작위로 섞음
+
+np.column_stack(([1,2,3],[4,5,6])) # 행-열 변환 / 튜플 형태로 입력
+np.column_stack((train_iput**2, train_input)) # 다항회귀를 위한 제곱열을 추가한 배열 생성
+        
+np.concatenate # 가로 배열
+
+np.mean(trian_input, axis = 0)
+np.std(train_input, axis = 0) # 각 열의 평균, 표준편차
+
+       
+# EDA ------------------------------------------------
+그래프 x, y축 비율 고려하면서 해석하기, 직관적으로 보이는대로 해석하지 않기
+        
+plt.scatter(x, y, marker = '^') 
+        # marker = '^' or 'D' 모양 지정
+plt.scatter(a_data[:, 0], a_data[:, 1]) # 데이터 배열에서 인덱스 0값과 1
+        
+plt.xlim((0,1000)) # 튜플 형식으로 입력 / plt.ylim((0,1000))
+
+plt.plot([15,50], [15*lr.coef_ + lr.intercept_, 50*lr.coef_ + lr.intercept_])        
+  # 선형회귀 직선 그리기
+        
+
+# 모델 매서드 ------------------------------------------------
+from sklearn.neighbors import KNeighborsRegressor
+knr = KNeighborsRegressor(n_neighbors = 3) # k 조정
+
+kn.score(x_data, y_data)
+        # knr에서는 결정계수 값  
+kn.predict(x, y) / kn.predict([[30, 600])) # 출력 시 일반 리스트가 아닌 넘파이 배열로 출
+  -> array([1])
+kn._fit_X
+  -> 독립변수 호출             
+kn._y
+  -> 종속변수 호출
+                               
+distances, indexes = kn.kneighbors([[25, 150]]) # 최근접 이웃 거리, 이웃 인덱스
+        # plt.scatter(train_input[indexes, 0], train_input[indexes, 1], marker = 'D')
+                               
+    
+# 모델 평가 ------------------------------------------------
+from sklearn.metrics import mean_square_error
+mae = mean_square_erro(test_target, test_prediction) # 실제값 - 예측값 오차 반환                              
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                               
