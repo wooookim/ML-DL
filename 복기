@@ -41,18 +41,64 @@
 다항회귀
 - 2차 방저식으로 회귀선을 곡선으로
 
+특성공학
+- 기존 특성을 활용해 새로운 특성을 만들어냄 -> 파생변수?
+
+판다스
+- 데이터분석 라이브러리
+
+CSV파일
+- ','로 나누어진 텍스트 파일
+
+특성 개수와 선형모델의 관계
+- 훈련 데이터를 강력하게 학습해 테스트 데이터셋에 영향력 없는 결과 출력
+- 샘플에 비해 특성이 많은 경우
+
+규제
+- 머신러닝 모델이 훈련 세트를 너무 과도하게 학습하지 않도록 방지 -> 과적합 방지
+- 선형회귀 모델의 경우 특성에 곱해지는 계수(또는 기울기)의 크기를 조절
+- 규제 이전에 특성 스케일이 정규화되지 않으면 규제가 공정히 작용하지 않음 -> 전처리 후 규제 적용
+- 릿지회귀
+  - 계수를 제곱한 값을 기준으로 규제를 적용
+  - 일반적으로 선호되는 규제
+  - sklearn.linear_model 패키지지
+- 라쏘회귀
+  - 계수를 0으로 유도 -> 값이 0이되는 특성이 생김 -> 유용한 특성을 확인하기 위해 활용 가 
+- 알파 매개변수(하이퍼파라미터)
+  - 릿지/라쏘 규제의 양을 조절
+  - 알파값이 크면 규제 강도가 강해져 계수값을 더 줄이고 조금 더 과소적합되도록 유도함
+  - 알파값이 작으면 계수를 줄이는 역할이 줄어들고 선형회귀 모델과 유사해져 과적합 가능성 높아짐
+
+
 # 파이썬 응용 ------------------------------------------------
 data = [[a, b] for a,b in zip(a_data, b_data)]      
 
-        
-# 전처리
+
+
+# 전처리 ------------------------------------------------
+from sklearn.model_selection import train_test_split
 train_test_split(x_data, y_data, test_size = , stratify = y_data, random_state= ) 
         # 기본 분류 비율 : 25%
         
         # stratify 매개변수에 타겟 데이터를 전달하면 클래스 비율에 맞게 조정
         # 훈련 데이터가 작거나 특정 클래스의 샘플 개수가 적을 때 특히 유용
 
-        
+from sklearn.preprocessing import PolynomialFeatures 
+        # 각 특성을 제곱한 항을 추가하고 특성끼리 곱한 항을 추가
+        # 가능한 배열 생성
+poly = PolynomialFeatures()
+poly = PolynomialFeatures(degree = 5, include_bias = False)
+        # degree = 5 -> 특성(고차항) 추가
+        # include_bias -> 생략해도 됨
+poly.fit([[2,3]]) # 리스트 안에 리스트,,
+poly.transform([[2,3]])
+        # [[2. 3. 4. 6. 9.]] # 2 * 3^2 이건 안됨, 최고 차항에 다른 요소를 곱하지 못한다
+
+from sklearn.preprocessing import StandardScaler
+
+from sklearn.linear_model import Ridge
+
+
 # numpy ------------------------------------------------
 test_array = np.array([1,2,3,4])
 test_array.shape # 행,열 출력
@@ -77,7 +123,8 @@ np.concatenate # 가로 배열
 np.mean(trian_input, axis = 0)
 np.std(train_input, axis = 0) # 각 열의 평균, 표준편차
 
-       
+
+
 # EDA ------------------------------------------------
 그래프 x, y축 비율 고려하면서 해석하기, 직관적으로 보이는대로 해석하지 않기
         
@@ -90,6 +137,7 @@ plt.xlim((0,1000)) # 튜플 형식으로 입력 / plt.ylim((0,1000))
 plt.plot([15,50], [15*lr.coef_ + lr.intercept_, 50*lr.coef_ + lr.intercept_])        
   # 선형회귀 직선 그리기
         
+
 
 # 모델 매서드 ------------------------------------------------
 from sklearn.neighbors import KNeighborsRegressor
@@ -106,7 +154,8 @@ kn._y
                                
 distances, indexes = kn.kneighbors([[25, 150]]) # 최근접 이웃 거리, 이웃 인덱스
         # plt.scatter(train_input[indexes, 0], train_input[indexes, 1], marker = 'D')
-                               
+
+
     
 # 모델 평가 ------------------------------------------------
 from sklearn.metrics import mean_square_error
