@@ -69,6 +69,43 @@ CSV파일
   - 알파값이 크면 규제 강도가 강해져 계수값을 더 줄이고 조금 더 과소적합되도록 유도함
   - 알파값이 작으면 계수를 줄이는 역할이 줄어들고 선형회귀 모델과 유사해져 과적합 가능성 높아짐
 
+KNN 주변 이웃의 클래스 비율 = 확률
+
+데이터프레임
+- 2차원 표 형식의 주요 데이터 구조
+- 통게, 그래프를 위한 매서드 제공
+- 넘파이와 상호 변환이 용이하고, 사이킷런과 호환성이 좋음음
+
+로지스틱회귀
+- 회귀지만 분류 모델(0 또는 1)
+- 선형회귀와 동일하게 선형 방정식을 학습
+
+시그모이드(로지스틱함수)
+- 1/(1 + e^(-z))
+- z가 무한히큰 음수일 경우 0, 무한히 큰 양수의 경우 1, 0일 경우 0.5 
+
+다중 분류
+- 타겟 데이터에 2개 이상클래스가 포함된 분류
+- 오름차순 정렬하기 때문에 unique로 출력한 값 순서와 다를 수 있음음
+
+다중분류 수행
+- 로지스틱회귀에서는 기본적으로 릿지회귀와 같이 계수의 제곱을 규제 -> L2 규제
+- 릿지 = 알파 조정
+- 로지스틱회귀 = C 조정
+- C의 경우 알파와 반대로 작을수록 규제가 커짐(기본값 1)
+
+소프트맥스(정규화된 지수 함수)
+- 다중분류는 이진분류에서 시그모이드 활용과는 달리 소프트맥스를 이용
+- 시그모이드 = 하나의 선형방정식의 출력값을 0 ~ 1 사이로 압축
+- 소프트맥스 = 여러개의 선형방정식의 출력값을 0 ~ 1 사이로 압축 후 전체 합이 1이 되도록 만듦
+- 이를 위해 지수 함수를 사용하기 떄문에 정규화된 지수 함수라고 부름
+- e_sum = e^z1 + e^z2 + ... + e^z7
+- s1 = e^z1 / e_sum,  s2 = e^z2 / e_sum,  ... , s7 = e^z7 / e_sum
+- s1 + s2 + ... + s7 = 1
+
+로지스틱회귀로 확률 예측
+- 분류모델은 예측뿐만아니라 예측 근거가 되는 확률 출력 가능 
+
 
 # 파이썬 응용 ------------------------------------------------
 data = [[a, b] for a,b in zip(a_data, b_data)]      
@@ -99,7 +136,16 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import Ridge
 
 
+# pandas ------------------------------------------------
+pd.unique(data['speices']) # 열 종류
+
+
+
+
 # numpy ------------------------------------------------
+fish_target = fish['species'].to_numpy() #-> [] 1차원 배열 생성
+fish_input = fish[['weight', 'length', ''']].to_numpy() #-> [[]] 1차원 배열 생성
+
 test_array = np.array([1,2,3,4])
 test_array.shape # 행,열 출력
         # [1,2,3,4]
@@ -109,8 +155,7 @@ test_array.reshape(2, 2) # 재배열
           [3 4]]
         # (2, 2) -> 행 요소 2개, 열 2개
 test_array.reshape(-1, 1) # -1 = 전체 선
-
-        
+       
 np.random.seed(42) # 랜덤 시드 지정
 index = np.arange(49) #0 부터 49까지 (n-1)까지 증가하는 배열 생성
 np.random.suffle(index) # 주어지는 배열 무작위로 섞음
@@ -123,9 +168,18 @@ np.concatenate # 가로 배열
 np.mean(trian_input, axis = 0)
 np.std(train_input, axis = 0) # 각 열의 평균, 표준편차
 
+np.round(proba, decimals = 4) # decimals > 자릿수 설정
+
+phi = 1 / (1 + np.exp(-z)) # 지수함수 계산(시그모이드)
 
 
-# EDA ------------------------------------------------
+* 넘파이 배열은 불리언 값을 이용해 행을 선택함
+
+
+
+
+
+# EDA(시각화) ------------------------------------------------
 그래프 x, y축 비율 고려하면서 해석하기, 직관적으로 보이는대로 해석하지 않기
         
 plt.scatter(x, y, marker = '^') 
@@ -136,7 +190,7 @@ plt.xlim((0,1000)) # 튜플 형식으로 입력 / plt.ylim((0,1000))
 
 plt.plot([15,50], [15*lr.coef_ + lr.intercept_, 50*lr.coef_ + lr.intercept_])        
   # 선형회귀 직선 그리기
-        
+
 
 
 # 모델 매서드 ------------------------------------------------
@@ -151,9 +205,14 @@ kn._fit_X
   -> 독립변수 호출             
 kn._y
   -> 종속변수 호출
+kn.predict_proba(test_scaled[:5]) # 클래스 확률값 반환 > 5개 샘플 확률값
                                
 distances, indexes = kn.kneighbors([[25, 150]]) # 최근접 이웃 거리, 이웃 인덱스
         # plt.scatter(train_input[indexes, 0], train_input[indexes, 1], marker = 'D')
+
+from sklearn.linear_model import LogtisticRegression
+decisions = lr.decision_function(train_bream_smelt[:5]) # 모델이 학습한 선형 방정식 결과 출력
+# coef_ intercept (계수, 절편 출력) <-> decision_function (방정식 결과(z값) 출력)
 
 
     
