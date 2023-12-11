@@ -267,6 +267,23 @@ permutation_importances (*permutation = 순열)
 xgboost
 - 다양한 부스팅 알고리즘 지원원
 
+axis = 0 -> 행
+axis = 1 -> 열열
+
+히스토그램
+- 값이 발생한 빈도를 그래프로 표시
+- 통상 x축이 구간(계급), y축이 발생 빈도(도수)
+
+군집(clustering) = 비슷한 샘플끼리 모으는 작업
+클러스터 = 군집 알고리즘에서 만든 그룹
+
+비지도학습
+- 타겟값이 없을때 데이터에 있는 패턴을 찾거나 데이터 구조를 파악하는 머신러닝 방식
+- 알고리즘을 직접 가르칠 수 없고, 스스로 데이터가 어떻게 구성되어 있는지 분석
+
+
+
+
 
 # 파이썬 응용 ------------------------------------------------
 data = [[a, b] for a,b in zip(a_data, b_data)]      
@@ -361,6 +378,18 @@ plt.plot([15,50], [15*lr.coef_ + lr.intercept_, 50*lr.coef_ + lr.intercept_])
 plot_tree(dt, filled = True, feature_names = ['A', 'B', 'C']) 
  -> dt = 결정트리모델, feature_names = 테스트 조
 
+plt.imshow(fruits[0], cmap = 'gray')   # 'gray_r' -> 반전
+
+fig, axs = plt.subplots(1, 2, figsize = (20, 5))   # 그래프 배치(1행 2열)
+axs[0].imshow(fruits[100], cmap = 'gray_r')
+
+plt.hist(np.mean(apple, axis = 1), alpha = 0.8)   # alpha -> 투명ㄷ도
+
+axs[0].bar(range(10000), np.mean(apple, axis = 0))
+
+axs[i, j].axis('off')   # 좌표축 제외 <-> 'on'
+
+
 
 # 모델 매서드 ------------------------------------------------
 from sklearn.neighbors import KNeighborsRegressor
@@ -427,7 +456,7 @@ result = permutation_importance(hgb, train_input, train_target, n_repeats = 10, 
 
 # 모델 평가 ------------------------------------------------
 from sklearn.metrics import mean_square_error
-mae = mean_square_erro(test_target, test_prediction) # 실제값 - 예측값 오차 반환                              
+mae = mean_square_error(test_target, test_prediction) # 실제값 - 예측값 오차 반환                              
 
 
 
