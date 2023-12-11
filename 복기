@@ -214,7 +214,58 @@ scipy 라이브러리
 - 파이썬 과학 라이브러리
 - 적분, 보간, 선형대수, 확률 등을 포함한 수치 계산 전용 라이브러리
 
+앙상블 학습
+- 통상 정형데이터를 다루는 데 가장 뛰어난 성과
 
+* 비정형 데이터는 규칙성을 찾기 어려워 전통적인 머신러닝 방법으로는 모델을 만들기 까다롭다 
+
+랜덤포레스트
+- 결정 트리를 랜덤하게 만들고 각 결정트리의 예측을 사용해 최종 예측
+- 입력된 훈련 데이터에서 랜덤하게 샘플을 추출하여 훈련 데이터를 만듦(샘플 중복 추출 가능)
+- 추출된 샘플 = 부트스트랩 샘플
+- 부트스트랩 샘플을 훈련세트의 크기와 같게 생성
+- 분류
+ - 전체 특성 개수의 제곱근만큼 특성을 사용
+ - 각 트리의 클래스 별 확률을 평균하여 가장 높은 호가률을 가진 클래스를 예측
+- 회귀
+ - 전체 특성 사용
+ - 단순히 각 트리의 예측을 평균
+- 랜덤하게 선택한 샘플과 특성을 사용하기 때문에 과적합을 방지함
+- 검증/테스트 세트에서 안정적인 성과과
+- 기본적으로 트리 100개 사용
+
+* 하나의 특성에 과도한 집중을 막고 좀 더 많은 특성이 훈련에 기여할 수 있게함
+ -> 과대적합을 막고 일반화 성능을 향상
+
+OOB(out of bag)
+- 부트스트랩 제외 샘플
+- 랜덤포레슽트 자체 모델 평가(검증 세트 역할수행)
+
+엑스트라 트리
+- 부트스트랩 샘플을 사용하지 않음
+- 결정트리 생성 시 전체 훈련세트 사용
+- 대신 노드를 분할할 때 가장 좋은 분할이 아닌 랜덤 분할 시행
+-> 계산 속도가 빠름름
+
+그래디언트 부스팅
+- 깊이가 얕은 결정트리를 사용해 이전 트리의 오차를 보완
+- 기본적으로 깊이가 3인 결정트리 100개 사용
+- 깊이가 얕은 트리 사용으로 과대적합에 강하고 통상 높은 일반화 성능을 기대할 수 있음
+- 학습률을 매개변수로 사용, 속도 조절
+- 학습률을 증가시키고, 트리 개수를 늘리면 향상될 수 있음
+- 일반적으로 부스팅이 랜덤포레스트보다 조금 더 높은 성능을 얻을 수 있다
+- 반면 부스팅의 경우 순서대로 트리를 추가하기 때문에 훈련 속도가 느림
+
+히스토그램 기반 그래디언트 부스팅
+- 입력 특성을 256개 구간으로 나눔 -> 노드를 분할할 때 최적의 분할을 매우 빠르게 찾음
+- 성능개선 관련 n_estimator 매개변수 대신, max_iter 매개변수 사용
+
+permutation_importances (*permutation = 순열)
+- 특성을 하나씩 랜덤하게 섞어 모델 성능이 변화하는지 관찰하고 어떤 특성이 중요한지 계산 
+- 사이킷런 제공 모든 추정기 모델에 사용 가능능
+
+xgboost
+- 다양한 부스팅 알고리즘 지원원
 
 
 # 파이썬 응용 ------------------------------------------------
@@ -355,6 +406,22 @@ gs.fit(train_input, train_target)
 gs.best_estimator_   # 검증 점수가 가장 높은 모델
 gs.best_params_  # 최적 매개변수
 gs.cv_results_['mean_test_score']  # 매개변수에서 수행한 교차검증 평균 점수
+
+from sklearn.ensemble import RandomForestClassifier
+rf = RandomForestClassifier(oob_score = True, n_jobs = -1, random_state = 42)
+rf.fit(train_input, train_target)
+print(rf.oob_score_)
+
+from sklearn.ensemble import ExtraTreesClassifier
+
+from sklearn.ensemble import GradientBoostingClassifier
+gb = GradientBoostingClassifier(n_estimator = 500, learning_Rate = 0.2, random_state = 42)
+
+from sklearn.experimetal import enable_hist_gradient_boosting
+from sklearn.ensemble import HistGradientBoostingClassifier
+
+from sklearn.inspection import permutation_importance
+result = permutation_importance(hgb, train_input, train_target, n_repeats = 10, random_state = 42)
 
 
 
