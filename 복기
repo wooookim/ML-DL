@@ -297,6 +297,49 @@ axis = 1 -> 열열
 pca로 훈련 데이터의 차원을 축소하면 저장 공간뿐만 아니라 머신러닝 모델 훈련 속도를 높일 수 있음음 
 차원을 줄여 특성이 적어졌기 때문에 시각화에 용이함
 
+인공신경망(ANN)
+- 교차검증을 잘 사용하지 않고 검증세트를 별도로 덜어내서 사용
+ - 딥러닝 분야의 데이터셋은 충분히 크기 때문에 검증 점수가 안정적
+ - 교차검증을 수행하기에는 훈련 시간이 너무 오래 걸림
+
+텐서플로
+- 오픈소스 딥러닝 라이브러리
+
+케라스
+- 텐서플로 고수준 API
+
+밀집층(완전연결층)
+
+활성화 함수(activation func)
+- 소프트맥스와 같이 뉴런의 선형 방정식 계산 결과에 적용되는 함수
+- 케라스 모델 훈련 전에 반드시 손실함수 종류 지정정
+
+원-핫 인코딩
+- 타겟값을 해당 클래스만 1이고 나머지를 모두 0인 배열로 변환
+
+컴파일
+- 신경망 모델을 훈련할 준비를 하는 단계로, 모델이 어떻게 학습될지를 정의하는 과정
+- 손실 함수(loss): 모델이 예측한 값과 실제 값 간의 차이를 측정하는 함수. 'sparse_categorical_crossentropy'는 주로 다중 분류 문제에서 사용
+- 옵티마이저(optimizer): 모델이 손실을 최소화하기 위해 가중치를 어떻게 업데이트할지를 결정하는 알고리즘. 예를 들면 'adam'이나 'sgd' 등
+- 평가 지표(metrics): 모델의 성능을 평가하는 데 사용되는 지표. 여기서는 'accuracy'로 설정
+
+ReLU
+- 입력이 양수일 경우 마치 활성화 함수가 없는 것처럼 그냥 입력을 통과
+- 양수는 그냥 출력, 음수는 0 출력
+- max(0, z)  -> z가 0보다 크면 z 출력 아니면 0
+
+인공신경망 하이퍼파라미터
+- 은닉층 개수
+- 뉴런 개수
+- 활성화 함수
+- 층의 종류
+- 배치 사이즈 매개변수
+- 에포크 매개변수
+
+케라스는 기본적으로 미니배치 경사강하법을 사용, 미니배치 개수 32
+
+
+
 
 
 
@@ -479,6 +522,15 @@ pca.n_components   # 주성분 개수 출력
 from sklearn.cluster import KMeans
 km = KMeans(n_cluster = 3, random_state = 42)
 
+from tensorflow import keras
+(train_input, train_target), (test_input, test_target) = keras.datasets.fashion_mnist.load_data()
+
+dense = keras.layers.Dense(10, activation = 'softmax', input_shape = (784,))
+ # Dense -> 밀집층 생성  # 뉴런개수, 손실함수, 크기
+model = keras.Sequential(dense)  # 신경망 모델 생성
+model.compile(loss = 'sparse_categorical_crossentropy', metrics = 'accuracy')
+model.evaluate(val_scaled, val_target)  # 모델 성능 평가
+model.summary()  # 모델 요약
 
 
 
