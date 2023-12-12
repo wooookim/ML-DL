@@ -281,6 +281,21 @@ axis = 1 -> 열열
 - 타겟값이 없을때 데이터에 있는 패턴을 찾거나 데이터 구조를 파악하는 머신러닝 방식
 - 알고리즘을 직접 가르칠 수 없고, 스스로 데이터가 어떻게 구성되어 있는지 분석
 
+1차원(벡터)과 2차원에서의 차원
+- 1차원(벡터)의 차원= 원소 개수
+- 다차원 배열에서 차원 = 축의 개수
+
+차원 축소
+- 데이터를 가장 잘나타내는 일부 특성을 선택해 데이터의 크기를 줄이고 지도 학습 모델의 성능을 향상
+- 줄어든 차원에서 다시 원본 차원으로 손실을 최대한 줄이며 복원도 가능
+- 대표 알고리즘 -> 주성분 분석(principal component analysis)
+
+설명된 분산
+- 주성분이 원본 데이터의 분산을 얼마나 잘 나타내는지 기록한 값
+- 첫 번째 주성분의 설명된 분산이 가장 크다다
+
+pca로 훈련 데이터의 차원을 축소하면 저장 공간뿐만 아니라 머신러닝 모델 훈련 속도를 높일 수 있음음 
+차원을 줄여 특성이 적어졌기 때문에 시각화에 용이함
 
 
 
@@ -451,6 +466,20 @@ from sklearn.ensemble import HistGradientBoostingClassifier
 
 from sklearn.inspection import permutation_importance
 result = permutation_importance(hgb, train_input, train_target, n_repeats = 10, random_state = 42)
+
+from sklearn.decomposition import PCA
+pca = PCA(n_components = 50)   # 개수로 조정
+pca = PCA(n_components = 0.5)   # 비율로 조정
+pca.fit(fruits_2nd)
+fruits_pca = pca.transform(fruits_2nd)  -> # 특성이 줄어듦
+fruits_inverse = pca.inverse_transform(fruits_pca)  -> # 특성 복구
+pca.explained_varriance_ratio_   # 설명 분산 합(비율) 출력력
+pca.n_components   # 주성분 개수 출력
+
+from sklearn.cluster import KMeans
+km = KMeans(n_cluster = 3, random_state = 42)
+
+
 
 
 
