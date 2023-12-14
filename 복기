@@ -372,6 +372,12 @@ ReLU
 - 특성맵의 개수는 줄이지 않음
 - 최대풀링/평균풀링
 
+함수형 API
+- Sequential 클래스는 층을 차례대로 쌓은 모델을 만들기 때문에 복잡한 모델에서 부적합
+- 다중 입력 또는 다중 출력에 대한 모델 생성
+
+* 합성곱 신경망의 앞 부분에 있는 합성곱 층은 이미지의 시각적인 정보를 감지
+* 뒤쪽에 있는 합성곱 층은 앞쪽에서 감지한 시각적인 정보를 바탕으로 추상적인 정보 학습
 
 
 
@@ -583,6 +589,12 @@ early_stopping_cb = keras.callbacks.EarlyStopping(patience = 2, restore_best_wei
 model.add(keras.layers.Conv2D(32, kernel_size = 3, activation = 'relu', padding = 'same', input_shape = (28, 28, 1))
 
 keras.utils.plot_model(model, show_shapes = True)
+
+model.layers
+conv = model.layers[0]
+print(conv.weights[0].shape, conv.weights[1].shape)  # 가중치, 절편
+
+
 
 
 
